@@ -27,7 +27,6 @@ void *philosopher(void *arg)
 }
 int main()
 {
- printf("Pranav Joshi \n");
  pthread_t philosophers[N];
  int ids[N];
  sem_init(&mutex, 0, 1);
@@ -74,8 +73,6 @@ def philosopher(id):
         forks[right_fork].release()
         print(f"Philosopher {id} finished eating.")
 
-
-print("Pranav Joshi")
 philosophers = []
 for i in range(N):
     philosophers.append(threading.Thread(target=philosopher, args=(i,)))
