@@ -1,4 +1,3 @@
-echo "Pranav Joshi"
 echo "Enter the number"
 read n
 function pal
