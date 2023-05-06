@@ -2,7 +2,6 @@
 #include <stdio.h>
 
 int main() {
-    printf("\n Pranav Joshi \n\n");
     int n, i, j;
     printf("Enter the number of processes: ");
     scanf("%d", &n);
@@ -57,7 +56,6 @@ import java.util.Scanner;
 public class FCFS {
  public static void main(String[] args) {
  Scanner input = new Scanner(System.in);
- System.out.print("\n Pranav Joshi \n\n");
  System.out.print("Enter the number of processes: ");
  int n = input.nextInt();
  int[] burstTimes = new int[n];
@@ -111,7 +109,6 @@ public class FCFS {
 
 
 #Using python
-print("\n Pranav Joshi \n\n")
 n = int(input("Enter the number of processes: "))
 burstTimes = [0] * n
 arrivalTimes = [0] * n
