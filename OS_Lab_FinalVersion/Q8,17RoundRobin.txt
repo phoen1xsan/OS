@@ -2,7 +2,6 @@
 #include <stdio.h>
 
 int main() {
-    printf("\n Pranav Joshi \n\n");
     
     int n;
     printf("Enter the number of processes: ");
