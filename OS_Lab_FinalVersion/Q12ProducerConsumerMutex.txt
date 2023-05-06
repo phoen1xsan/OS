@@ -44,7 +44,6 @@ buffer[count], count);
 }
 int main()
 {
- printf("Pranav Joshi \n");
  pthread_t p[10], c[10];
  pthread_mutex_init(&mutex, NULL);
  unsigned long int i;
@@ -99,7 +98,6 @@ def consumer(item):
                 print(f"Consumer {item}: Remove Item {buffer[count]} from {count}")
         time.sleep(1)
 
-print("Pranav Joshi")
 threads = []
 for i in range(10):
     threads.append(threading.Thread(target=producer, args=(i+1,)))
