@@ -11,13 +11,14 @@ f=$((f*num))
 echo $f
 fi
 }
-echo Pranav Joshi
 read -p "Enter the number:" n
 if((n==0)); then
 echo 1
 else
 fact $n
 fi
+
+
 
 #Nonrecursively
 echo "Enter a number:"
