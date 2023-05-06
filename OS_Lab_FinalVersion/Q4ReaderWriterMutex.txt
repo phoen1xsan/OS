@@ -34,7 +34,6 @@ void *reader(void *arg)
 }
 int main()
 {
- printf("Pranav Joshi \n");
  pthread_t writers[4], readers[6];
  pthread_mutex_init(&read_mutex, NULL);
  pthread_mutex_init(&write_mutex, NULL);
@@ -79,8 +78,6 @@ def reader(index):
         reader_cnt -= 1
         if reader_cnt == 0:
             write_mutex.release()
-
-print("Pranav Joshi")
 
 writers = []
 for i in range(4):
