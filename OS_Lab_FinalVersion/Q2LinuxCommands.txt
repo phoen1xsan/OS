@@ -1,0 +1,19 @@
+i. Redirect the output of ls command to a file named outfile. Use this as an input file for remaining commands.
+
+ls > outfile
+
+ii. To select the lines in a file which has a digit as one of the characters in that line and redirect the output to the file named list.
+
+grep -E '[0-9]' outfile > list
+
+iii. Assign execute permission to owner and remove read permission from others for an ordinary file named test by relative way.
+
+chmod u+x,go-r test
+
+iv. Create an alias named rm that always deletes files interactively.
+
+alias rm='rm -i'
+
+v. Count the currently login users to the system.
+
+who | wc -l

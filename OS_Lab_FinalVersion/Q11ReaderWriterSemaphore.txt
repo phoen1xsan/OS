@@ -1,0 +1,112 @@
+//Using C
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <semaphore.h>
+#define BUFFER_SIZE 10
+int buffer[BUFFER_SIZE];
+int reader_cnt = 0;
+sem_t read_sem, write_sem, mutex;
+void *writer(void *arg)
+{
+ int data = *(int *)arg;
+ sem_wait(&write_sem);
+ buffer[0] = data;
+ printf("Writer wrote %d\n", data);
+ sem_post(&write_sem);
+ pthread_exit(NULL);
+}
+void *reader(void *arg)
+{
+ int index = *(int *)arg;
+ sem_wait(&mutex);
+ reader_cnt++;
+ if (reader_cnt == 1)
+ sem_wait(&write_sem);
+ sem_post(&mutex);
+ sem_wait(&read_sem);
+ printf("Reader %d read %d\n", index, buffer[0]);
+ sem_post(&read_sem);
+ sem_wait(&mutex);
+ reader_cnt--;
+ if (reader_cnt == 0)
+ sem_post(&write_sem);
+ sem_post(&mutex);
+ pthread_exit(NULL);
+}
+int main()
+{
+ printf("Pranav Joshi \n");
+ pthread_t writers[4], readers[6];
+ sem_init(&read_sem, 0, 1);
+ sem_init(&write_sem, 0, 1);
+ sem_init(&mutex, 0, 1);
+ int i;
+ for (i = 0; i < 4; i++)
+ pthread_create(&writers[i], NULL, writer, &i);
+ for (i = 0; i < 6; i++)
+ pthread_create(&readers[i], NULL, reader, &i);
+ for (i = 0; i < 4; i++)
+ pthread_join(writers[i], NULL);
+ for (i = 0; i < 6; i++)
+ pthread_join(readers[i], NULL);
+ sem_destroy(&read_sem);
+ sem_destroy(&write_sem);
+ sem_destroy(&mutex);
+ return 0;
+}
+
+
+
+#Using python
+import threading
+import time
+import random
+
+BUFFER_SIZE = 10
+buffer = [0] * BUFFER_SIZE
+reader_cnt = 0
+read_sem = threading.Semaphore(1)
+write_sem = threading.Semaphore(1)
+mutex = threading.Semaphore(1)
+
+def writer(data):
+    global buffer
+    write_sem.acquire()
+    buffer[0] = data
+    print(f"Writer wrote {data}")
+    write_sem.release()
+
+def reader(index):
+    global buffer, reader_cnt
+    mutex.acquire()
+    reader_cnt += 1
+    if reader_cnt == 1:
+        write_sem.acquire()
+    mutex.release()
+    read_sem.acquire()
+    print(f"Reader {index} read {buffer[0]}")
+    read_sem.release()
+    mutex.acquire()
+    reader_cnt -= 1
+    if reader_cnt == 0:
+        write_sem.release()
+    mutex.release()
+
+def run():
+    while True:
+        writer_thread = threading.Thread(target=writer, args=(random.randint(1, 100),))
+        writer_thread.start()
+        reader_threads = []
+        for i in range(6):
+            reader_thread = threading.Thread(target=reader, args=(i,))
+            reader_threads.append(reader_thread)
+            reader_thread.start()
+        for reader_thread in reader_threads:
+            reader_thread.join()
+        writer_thread.join()
+        time.sleep(1)
+
+if __name__ == '__main__':
+    print("Pranav Joshi")
+    run()

@@ -1,0 +1,32 @@
+#Recursively
+fact()
+{
+num=$1
+if((num<=2)); then
+echo $num
+else
+f=$((num -1))
+f=$(fact $f)
+f=$((f*num))
+echo $f
+fi
+}
+echo Pranav Joshi
+read -p "Enter the number:" n
+if((n==0)); then
+echo 1
+else
+fact $n
+fi
+
+#Nonrecursively
+echo "Enter a number:"
+read n
+
+fact=1
+for (( i=1; i<=$n; i++ ))
+do
+  fact=$(( $fact * $i ))
+done
+
+echo "Factorial of $n is $fact"

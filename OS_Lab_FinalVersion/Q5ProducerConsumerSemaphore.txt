@@ -1,0 +1,113 @@
+//Using C
+#include <stdio.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include <stdlib.h>
+#define BufferSize 10
+sem_t empty;
+sem_t full;
+int count = 0;
+int buffer[BufferSize];
+void *producer(void *item)
+{
+ long int num = (long int)item;
+ while (1)
+ {
+ int item = rand() % 10;
+ sem_wait(&empty);
+ buffer[count] = item;
+ printf("Producer %ld: Insert Item %d at %d\n", num + 1, item,
+count);
+ count++;
+ sem_post(&full);
+ sleep(1);
+ }
+ pthread_exit(NULL);
+}
+void *consumer(void *item)
+{
+ long int num = (long int)item;
+ while (1)
+ {
+ sem_wait(&full);
+ count--;
+ printf("Consumer %ld: Remove Item %d from %d\n", num + 1,
+buffer[count], count);
+ sem_post(&empty);
+ sleep(1);
+ }
+ pthread_exit(NULL);
+}
+int main()
+{
+ printf("Pranav Joshi\n");
+ pthread_t p[10], c[10];
+ sem_init(&empty, 0, BufferSize);
+ sem_init(&full, 0, 0);
+ unsigned long int i;
+ for (i = 0; i < 10; i++)
+ {
+ pthread_create(&p[i], NULL, producer, (void *)i);
+ }
+ for (i = 0; i < 10; i++)
+ {
+ pthread_create(&c[i], NULL, consumer, (void *)i);
+ }
+ for (i = 0; i < 10; i++)
+ {
+ pthread_join(p[i], NULL);
+ }
+ for (i = 0; i < 10; i++)
+ {
+ pthread_join(c[i], NULL);
+ }
+ sem_destroy(&empty);
+ sem_destroy(&full);
+ return 0;
+}
+
+
+
+#Using python
+import threading
+import random
+import time
+
+BUFFER_SIZE = 10
+count = 0
+buffer = [0] * BUFFER_SIZE
+empty = threading.Semaphore(BUFFER_SIZE)
+full = threading.Semaphore(0)
+
+def producer(num):
+    global count
+    while True:
+        item = random.randint(0, 9)
+        empty.acquire()
+        buffer[count] = item
+        print(f"Producer {num + 1}: Insert Item {item} at {count}")
+        count += 1
+        full.release()
+        time.sleep(1)
+
+def consumer(num):
+    global count
+    while True:
+        full.acquire()
+        count -= 1
+        print(f"Consumer {num + 1}: Remove Item {buffer[count]} from {count}")
+        empty.release()
+        time.sleep(1)
+
+
+print("Pranav Joshi")
+producers = [threading.Thread(target=producer, args=(i,)) for i in range(10)]
+consumers = [threading.Thread(target=consumer, args=(i,)) for i in range(10)]
+for producer_thread in producers:
+    producer_thread.start()
+for consumer_thread in consumers:
+    consumer_thread.start()
+for producer_thread in producers:
+    producer_thread.join()
+for consumer_thread in consumers:
+    consumer_thread.join()

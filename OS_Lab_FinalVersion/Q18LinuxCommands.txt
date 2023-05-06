@@ -1,0 +1,19 @@
+i. To redirect the output of cp command to a file named outfile:
+
+cp source_file destination_file > outfile
+
+ii. To select the lines in a file which has 4 letter words in that line and redirect the output to the file named list:
+
+cat a.txt | grep " [a-z][a-z][a-z][a-z] " >> list.txt
+
+iii. Assign write permission to owner and remove read permission from group user for an ordinary file named test by relative way:
+
+chmod u+w,g-r test
+
+iv. Create an alias named ls that always lists all the files including hidden files:
+
+alias ls='ls -a'
+
+v. Count the number of words in the list file:
+
+wc -w list

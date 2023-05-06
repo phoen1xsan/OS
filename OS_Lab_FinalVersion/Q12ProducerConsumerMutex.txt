@@ -1,0 +1,110 @@
+//Using C
+#include <stdio.h>
+#include <pthread.h>
+#include <stdlib.h>
+#define BufferSize 10
+int count = 0;
+int buffer[BufferSize];
+pthread_mutex_t mutex;
+void *producer(void *item)
+{
+ long int num = (long int)item;
+ while (1)
+ {
+ pthread_mutex_lock(&mutex);
+ if (count < BufferSize)
+ {
+ int item = rand() % 10;
+ buffer[count] = item;
+ printf("Producer %ld: Insert Item %d at %d\n", num + 1, item,
+count);
+ count++;
+ }
+ pthread_mutex_unlock(&mutex);
+ sleep(1);
+ }
+ pthread_exit(NULL);
+}
+void *consumer(void *item)
+{
+ long int num = (long int)item;
+ while (1)
+ {
+ pthread_mutex_lock(&mutex);
+ if (count > 0)
+ {
+ count--;
+ printf("Consumer %ld: Remove Item %d from %d\n", num + 1,
+buffer[count], count);
+ }
+ pthread_mutex_unlock(&mutex);
+ sleep(1);
+ }
+ pthread_exit(NULL);
+}
+int main()
+{
+ printf("Pranav Joshi \n");
+ pthread_t p[10], c[10];
+ pthread_mutex_init(&mutex, NULL);
+ unsigned long int i;
+ for (i = 0; i < 10; i++)
+ {
+ pthread_create(&p[i], NULL, producer, (void *)i);
+ }
+ for (i = 0; i < 10; i++)
+ {
+ pthread_create(&c[i], NULL, consumer, (void *)i);
+ }
+ for (i = 0; i < 10; i++)
+ {
+ pthread_join(p[i], NULL);
+ }
+ for (i = 0; i < 10; i++)
+ {
+ pthread_join(c[i], NULL);
+ }
+ return 0;
+}
+
+
+
+#Using Python
+import threading
+import random
+import time
+
+BufferSize = 10
+count = 0
+buffer = [0] * BufferSize
+mutex = threading.Lock()
+
+def producer(item):
+    while True:
+        with mutex:
+            global count
+            if count < BufferSize:
+                item = random.randint(0, 9)
+                buffer[count] = item
+                print(f"Producer {item}: Insert Item {item} at {count}")
+                count += 1
+        time.sleep(1)
+
+def consumer(item):
+    while True:
+        with mutex:
+            global count
+            if count > 0:
+                count -= 1
+                print(f"Consumer {item}: Remove Item {buffer[count]} from {count}")
+        time.sleep(1)
+
+print("Pranav Joshi")
+threads = []
+for i in range(10):
+    threads.append(threading.Thread(target=producer, args=(i+1,)))
+    threads.append(threading.Thread(target=consumer, args=(i+1,)))
+for thread in threads:
+    thread.start()
+for thread in threads:
+    thread.join()

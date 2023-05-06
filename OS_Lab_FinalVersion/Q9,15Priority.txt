@@ -1,0 +1,214 @@
+//Using C
+#include <stdio.h>
+
+int main() {
+    int n;
+    printf("Enter the number of processes: ");
+    scanf("%d", &n);
+
+    int burst_times[n], arrival_times[n], priorities[n], waiting_times[n], turnaround_times[n], completion_times[n];
+
+    printf("Enter the arrival time, burst time and priority for each process:\n");
+    for (int i = 0; i < n; i++) {
+        printf("Process %d Arrival Time: ", i+1);
+        scanf("%d", &arrival_times[i]);
+        printf("Process %d Burst Time: ", i+1);
+        scanf("%d", &burst_times[i]);
+        printf("Process %d Priority: ", i+1);
+        scanf("%d", &priorities[i]);
+    }
+
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (arrival_times[i] > arrival_times[j]) {
+                int temp = burst_times[i];
+                burst_times[i] = burst_times[j];
+                burst_times[j] = temp;
+                temp = arrival_times[i];
+                arrival_times[i] = arrival_times[j];
+                arrival_times[j] = temp;
+                temp = priorities[i];
+                priorities[i] = priorities[j];
+                priorities[j] = temp;
+            }
+        }
+    }
+
+    int current_time = 0;
+    int total_waiting_time = 0;
+    int total_turnaround_time = 0;
+    for (int i = 0; i < n; i++) {
+        int shortest = i;
+        for (int j = i + 1; j < n; j++) {
+            if (priorities[j] < priorities[shortest] && arrival_times[j] <= current_time) {
+                shortest = j;
+            }
+        }
+        current_time += burst_times[shortest];
+        waiting_times[shortest] = current_time - burst_times[shortest] - arrival_times[shortest];
+        turnaround_times[shortest] = current_time - arrival_times[shortest];
+        completion_times[shortest] = current_time;
+        total_waiting_time += waiting_times[shortest];
+        total_turnaround_time += turnaround_times[shortest];
+        int temp = burst_times[i];
+        burst_times[i] = burst_times[shortest];
+        burst_times[shortest] = temp;
+        temp = arrival_times[i];
+        arrival_times[i] = arrival_times[shortest];
+        arrival_times[shortest] = temp;
+        temp = priorities[i];
+        priorities[i] = priorities[shortest];
+        priorities[shortest] = temp;
+    }
+
+    float avg_waiting_time = (float) total_waiting_time / n;
+    float avg_turnaround_time = (float) total_turnaround_time / n;
+
+    printf("Process\t Arrival Time\t Burst Time\t Priority\tCompletion Time\t Waiting Time\tTurnaround Time\n");
+    for (int i = 0; i < n; i++) {
+        printf("%d\t\t%d\t\t%d\t\t%d\t\t%d\t\t\t%d\t\t%d\n", i+1, arrival_times[i], burst_times[i], priorities[i], completion_times[i], waiting_times[i], turnaround_times[i]);
+    }
+
+    printf("\nAverage Waiting Time: %f\n", avg_waiting_time);
+    printf("\nAverage Turnaround Time: %f\n", avg_turnaround_time);
+
+    return 0;
+}
+
+
+
+
+//Using Java
+import java.util.*;
+public class PriorityNonPreemptive {
+ public static void main(String[] args) {
+ Scanner input = new Scanner(System.in);
+
+ System.out.print("Enter the number of processes: ");
+ int n = input.nextInt();
+ int[] burstTimes = new int[n];
+ int[] arrivalTimes = new int[n];
+ int[] priorities = new int[n];
+ int[] waitingTimes = new int[n];
+ int[] turnaroundTimes = new int[n];
+ int[] completionTimes = new int[n];
+ System.out.println("Enter the arrival time, burst time and priority for each process:");
+ for (int i = 0; i < n; i++) {
+ System.out.print("Process " + (i+1) + " Arrival Time: ");
+ arrivalTimes[i] = input.nextInt();
+ System.out.print("Process " + (i+1) + " Burst Time: ");
+ burstTimes[i] = input.nextInt();
+ System.out.print("Process " + (i+1) + " Priority: ");
+ priorities[i] = input.nextInt();
+ }
+ for (int i = 0; i < n - 1; i++) {
+ for (int j = i + 1; j < n; j++) {
+ if (arrivalTimes[i] > arrivalTimes[j]) {
+ int temp = burstTimes[i];
+ burstTimes[i] = burstTimes[j];
+ burstTimes[j] = temp;
+ temp = arrivalTimes[i];
+ arrivalTimes[i] = arrivalTimes[j];
+ arrivalTimes[j] = temp;
+ temp = priorities[i];
+ priorities[i] = priorities[j];
+ priorities[j] = temp;
+ }
+ }
+ }
+ int currentTime = 0;
+ int totalWaitingTime = 0;
+ int totalTurnaroundTime = 0;
+ for (int i = 0; i < n; i++) {
+ int shortest = i;
+ for (int j = i + 1; j < n; j++) {
+ if (priorities[j] < priorities[shortest] && arrivalTimes[j] <= currentTime) {
+ shortest = j;
+ }
+ }
+ currentTime += burstTimes[shortest];
+ waitingTimes[shortest] = currentTime - burstTimes[shortest] - arrivalTimes[shortest];
+ turnaroundTimes[shortest] = currentTime - arrivalTimes[shortest];
+ completionTimes[shortest] = currentTime;
+ totalWaitingTime += waitingTimes[shortest];
+ totalTurnaroundTime += turnaroundTimes[shortest];
+ int temp = burstTimes[i];
+ burstTimes[i] = burstTimes[shortest];
+ burstTimes[shortest] = temp;
+ temp = arrivalTimes[i];
+ arrivalTimes[i] = arrivalTimes[shortest];
+ arrivalTimes[shortest] = temp;
+ temp = priorities[i];
+ priorities[i] = priorities[shortest];
+ priorities[shortest] = temp;
+ }
+ float avgWaitingTime = (float) totalWaitingTime / n;
+ float avgTurnaroundTime = (float) totalTurnaroundTime / n;
+
+ System.out.println("Process\t Arrival Time\t Burst Time\t Priority\tCompletion Time\t Waiting Time\tTurnaround Time");
+ for (int i = 0; i < n; i++) {
+ System.out.println((i+1) + "\t\t" + arrivalTimes[i] + "\t\t" + burstTimes[i] + "\t\t" + priorities[i] + "\t\t" + completionTimes[i] + "\t\t" + waitingTimes[i] + "\t\t" + turnaroundTimes[i]);
+ }
+
+ System.out.println("\nAverage Waiting Time: " + avgWaitingTime);
+ System.out.println("\nAverage Turnaround Time: " + avgTurnaroundTime);
+ }
+}
+
+
+
+
+#Using python
+from operator import itemgetter
+
+n = int(input("Enter the number of processes: "))
+burst_times = []
+arrival_times = []
+priorities = []
+waiting_times = []
+turnaround_times = []
+completion_times = []
+
+print("Enter the arrival time, burst time and priority for each process:")
+for i in range(n):
+    print("Process ", i+1, " Arrival Time: ", end="")
+    arrival_times.append(int(input()))
+    print("Process ", i+1, " Burst Time: ", end="")
+    burst_times.append(int(input()))
+    print("Process ", i+1, " Priority: ", end="")
+    priorities.append(int(input()))
+
+for i in range(n - 1):
+    for j in range(i + 1, n):
+        if arrival_times[i] > arrival_times[j]:
+            burst_times[i], burst_times[j] = burst_times[j], burst_times[i]
+            arrival_times[i], arrival_times[j] = arrival_times[j], arrival_times[i]
+            priorities[i], priorities[j] = priorities[j], priorities[i]
+
+current_time = 0
+total_waiting_time = 0
+total_turnaround_time = 0
+for i in range(n):
+    shortest = i
+    for j in range(i + 1, n):
+        if priorities[j] < priorities[shortest] and arrival_times[j] <= current_time:
+            shortest = j
+    current_time += burst_times[shortest]
+    waiting_times.append(current_time - burst_times[shortest] - arrival_times[shortest])
+    turnaround_times.append(current_time - arrival_times[shortest])
+    completion_times.append(current_time)
+    total_waiting_time += waiting_times[shortest]
+    total_turnaround_time += turnaround_times[shortest]
+    burst_times[i], burst_times[shortest] = burst_times[shortest], burst_times[i]
+    arrival_times[i], arrival_times[shortest] = arrival_times[shortest], arrival_times[i]
+    priorities[i], priorities[shortest] = priorities[shortest], priorities[i]
+
+avg_waiting_time = float(total_waiting_time) / n
+avg_turnaround_time = float(total_turnaround_time) / n
+
+print("Process\t Arrival Time\t Burst Time\t Priority\tCompletion Time\t Waiting Time\tTurnaround Time")
+for i in range(n):
+    print(i+1, "\t\t", arrival_times[i], "\t\t", burst_times[i], "\t\t", priorities[i], "\t\t", completion_times[i], "\t\t", waiting_times[i], "\t\t", turnaround_times[i])
+
+print("\nAverage Waiting Time: ", avg_waiting_time)
+print("\nAverage Turnaround Time: ", avg_turnaround_time)

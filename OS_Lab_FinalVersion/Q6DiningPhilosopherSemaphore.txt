@@ -1,0 +1,88 @@
+//Using C
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <semaphore.h>
+#define N 5
+sem_t forks[N];
+sem_t mutex;
+void *philosopher(void *arg)
+{
+ int id = *(int *)arg;
+ int left_fork = id;
+ int right_fork = (id + 1) % N;
+ while (1) {
+ printf("Philosopher %d is thinking.\n", id);
+ sleep(rand() % 5);
+ sem_wait(&mutex);
+ sem_wait(&forks[left_fork]);
+ sem_wait(&forks[right_fork]);
+ sem_post(&mutex);
+ printf("Philosopher %d is eating.\n", id);
+ sleep(rand() % 5);
+ sem_post(&forks[left_fork]);
+ sem_post(&forks[right_fork]);
+ printf("Philosopher %d finished eating.\n", id);
+ }
+}
+int main()
+{
+ printf("Pranav Joshi \n");
+ pthread_t philosophers[N];
+ int ids[N];
+ sem_init(&mutex, 0, 1);
+ int i;
+ for (i = 0; i < N; i++)
+ sem_init(&forks[i], 0, 1);
+ for (i = 0; i < N; i++) {
+ ids[i] = i;
+ pthread_create(&philosophers[i], NULL, philosopher, &ids[i]);
+ }
+ for (i = 0; i < N; i++)
+ pthread_join(philosophers[i], NULL);
+ sem_destroy(&mutex);
+ for (i = 0; i < N; i++)
+ sem_destroy(&forks[i]);
+ return 0;
+}
+
+
+
+
+#Using python
+import threading
+import random
+import time
+
+N = 5
+forks = [threading.Semaphore(1) for i in range(N)]
+mutex = threading.Semaphore(1)
+
+def philosopher(id):
+    left_fork = id
+    right_fork = (id + 1) % N
+    while True:
+        print(f"Philosopher {id} is thinking.")
+        time.sleep(random.randint(0, 4))
+        mutex.acquire()
+        forks[left_fork].acquire()
+        forks[right_fork].acquire()
+        mutex.release()
+        print(f"Philosopher {id} is eating.")
+        time.sleep(random.randint(0, 4))
+        forks[left_fork].release()
+        forks[right_fork].release()
+        print(f"Philosopher {id} finished eating.")
+
+
+print("Pranav Joshi")
+philosophers = []
+for i in range(N):
+    philosophers.append(threading.Thread(target=philosopher, args=(i,)))
+for philosopher in philosophers:
+    philosopher.start()
+for philosopher in philosophers:
+    philosopher.join()
+for fork in forks:
+    fork.release()
+print("All philosophers have finished eating.")

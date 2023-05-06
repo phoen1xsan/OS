@@ -1,0 +1,31 @@
+i. Redirect the output of cat command to a file named outfile. Use this as an input file for remaining commands.
+
+cat > outfile
+
+ii. List all hidden files under the current directory and store in a "hidden" file.
+
+ls -a | grep "^\." > hidden
+
+iii. Assign write permission to the owner and remove execute permission from others for an ordinary file named test by absolute way.
+
+chmod 600 test
+
+iv. To create soft and hard link for a given file.
+
+# Soft link
+ln -s source_file soft_link_name
+
+# Hard link
+ln source_file hard_link_name
+
+v. To convert lowercase to upper case of a given file.
+
+tr '[:lower:]' '[:upper:]' < input_file > output_file
+
+vi. To extract the first and tenth character of a given file.
+
+cut -c 1,10 input_file > output_file
+
+vii. To display how many times lines are repeated in a given file.
+
+sort input_file | uniq -c

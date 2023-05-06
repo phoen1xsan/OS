@@ -1,0 +1,35 @@
+a. To redirect the output of mv command to a file named outfile:
+
+mv file1 file2 > outfile
+
+b. To list all hidden files under the current directory and store in a file named hidden:
+
+ls -a | grep "^\." > hidden
+
+c. To assign write permission to group user and remove execute permission from owner for an ordinary file named test by absolute way:
+
+chmod g+w,o-x test
+
+d. To create a soft and hard link for a given file:
+
+# Soft link
+ln -s source_file soft_link_name
+
+# Hard link
+ln source_file hard_link_name
+
+e. To convert lowercase to uppercase of a given file:
+
+tr [:lower:] [:upper:] < input.txt >> output.txt
+
+f. To extract 2nd and 3rd character of a given file:
+
+cut -c 2-3 inputfile > outputfile
+or
+cut -c 2,3 input > output
+
+g. To display how many times lines are repeated in a given file:
+
+sort inputfile | uniq -c
+
+uniq -D to show those lines

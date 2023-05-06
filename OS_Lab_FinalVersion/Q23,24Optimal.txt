@@ -1,0 +1,150 @@
+//Using C
+#include <stdio.h>
+int main()
+{
+    int no_of_frames, no_of_pages, frames[10], pages[30], temp[10], flag1,
+    flag2, flag3, i, j, k, pos, max, faults = 0;
+ printf("Enter the number of frames: ");
+ scanf("%d", &no_of_frames);
+ printf("Enter the number of pages: ");
+ scanf("%d", &no_of_pages);
+ printf("Enter the page reference string: ");
+ for (i = 0; i < no_of_pages; ++i)
+ {
+ scanf("%d", &pages[i]);
+ }
+ for (i = 0; i < no_of_frames; ++i)
+ {
+ frames[i] = -1;
+ }
+ for (i = 0; i < no_of_pages; ++i)
+ {
+ flag1 = flag2 = 0;
+ for (j = 0; j < no_of_frames; ++j)
+ {
+ if (frames[j] == pages[i])
+ {
+ flag1 = flag2 = 1;
+ break;
+ }
+ }
+ if (flag1 == 0)
+ {
+ for (j = 0; j < no_of_frames; ++j)
+ {
+ if (frames[j] == -1)
+ {
+ faults++;
+ frames[j] = pages[i];
+ flag2 = 1;
+ break;
+ }
+ }
+ }
+ if (flag2 == 0)
+ {
+ flag3 = 0;
+ for (j = 0; j < no_of_frames; ++j)
+ {
+ temp[j] = -1;
+ for (k = i + 1; k < no_of_pages; ++k)
+ {
+ if (frames[j] == pages[k])
+ {
+ temp[j] = k;
+ break;
+ }
+ }
+ }
+ for (j = 0; j < no_of_frames; ++j)
+ {
+ if (temp[j] == -1)
+ {
+ pos = j;
+ flag3 = 1;
+ break;
+ }
+ }
+ if (flag3 == 0)
+ {
+ max = temp[0];
+ pos = 0;
+ for (j = 1; j < no_of_frames; ++j)
+ {
+ if (temp[j] > max)
+ {
+ max = temp[j];
+ pos = j;
+ }
+ }
+ }
+ frames[pos] = pages[i];
+ faults++;
+ }
+ printf("\n");
+ for (j = 0; j < no_of_frames; ++j)
+ {
+ printf("%d\t", frames[j]);
+ }
+ }
+ printf("\n\nTotal Number of Page Faults: %d", faults);
+ printf("\nTotal Number of Page Hits: %d", no_of_pages - faults);
+ return 0;
+}
+
+
+
+
+//Using C++
+#include <iostream>
+#include <queue>
+#include <unordered_set>
+#include <vector>
+using namespace std;
+
+int main(){
+    vector<int> reference = {1,2,3,4,1,2,5,1,2,3,4,5};
+    int frames = 3;
+    int faults = 0;
+    int hits = 0;
+    
+    unordered_set<int> s;
+    for(int i=0; i<reference.size(); ++i){
+        int page = reference[i];
+        if(s.size()<frames){ // frames not full
+            if(s.find(page)==s.end()){ // page not found
+                s.insert(page);
+                faults++;
+            }
+            else{ // page found
+                hits++;
+            }
+        }
+        else{ // frames full
+            if(s.find(page)==s.end()){ // page not found
+                unordered_set<int> lru_pages;
+                int temp;
+                for(int j=i+1; j<reference.size(); ++j){
+                    int lru = reference[j];
+                    if(s.find(lru) != s.end()){
+                        lru_pages.insert(lru);
+                    }
+                    if(lru_pages.size() == frames){
+                        temp = lru; 
+                        break;
+                    }
+                }
+                s.erase(temp);
+                s.insert(page);
+                faults++;
+            }
+            else{ // page found
+                hits++;
+            }
+        }
+    }
+
+    cout<<"Page Hits -> "<<hits<<endl;
+    cout<<"Page Faults -> "<<faults<<endl;
+    return 0;
+}

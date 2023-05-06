@@ -1,0 +1,197 @@
+//Using C
+#include <stdio.h>
+
+int main() {
+    printf("\n Pranav Joshi \n\n");
+    
+    int n;
+    printf("Enter the number of processes: ");
+    scanf("%d", &n);
+
+    int burstTimes[n];
+    int remainingTimes[n];
+    int waitingTimes[n];
+    int turnaroundTimes[n];
+    int arrivalTimes[n];
+    int completionTimes[n];
+
+    int quantum;
+    printf("Enter the time quantum: ");
+    scanf("%d", &quantum);
+
+    printf("Enter the arrival time and burst time for each process:\n");
+    for (int i = 0; i < n; i++) {
+        printf("Process %d arrival time: ", i+1);
+        scanf("%d", &arrivalTimes[i]);
+        printf("Process %d burst time: ", i+1);
+        scanf("%d", &burstTimes[i]);
+        remainingTimes[i] = burstTimes[i];
+    }
+
+    int currentTime = 0;
+    while (1) {
+        int done = 1;
+        for (int i = 0; i < n; i++) {
+            if (remainingTimes[i] > 0 && arrivalTimes[i] <= currentTime) {
+                done = 0;
+                if (remainingTimes[i] > quantum) {
+                    currentTime += quantum;
+                    remainingTimes[i] -= quantum;
+                } else {
+                    currentTime += remainingTimes[i];
+                    completionTimes[i] = currentTime;
+                    waitingTimes[i] = currentTime - burstTimes[i] - arrivalTimes[i];
+                    remainingTimes[i] = 0;
+                }
+            }
+        }
+        if (done) {
+            break;
+        }
+    }
+
+    for (int i = 0; i < n; i++) {
+        turnaroundTimes[i] = completionTimes[i] - arrivalTimes[i];
+    }
+
+    float avgWaitingTime = 0, avgTurnaroundTime = 0;
+    for (int i = 0; i < n; i++) {
+        avgWaitingTime += waitingTimes[i];
+        avgTurnaroundTime += turnaroundTimes[i];
+    }
+    avgWaitingTime /= n;
+    avgTurnaroundTime /= n;
+
+    printf("\nProcess \tArrival Time\tBurst Time\tCompletion Time \tWaiting Time\tTurnaround Time\n");
+    for (int i = 0; i < n; i++) {
+        printf("%d\t\t %d\t\t %d\t\t %d\t\t\t%d\t\t\t%d\n", i+1, arrivalTimes[i], burstTimes[i], completionTimes[i], waitingTimes[i], turnaroundTimes[i]);
+    }
+    printf("\nAverage Waiting Time: %f\n", avgWaitingTime);
+    printf("\nAverage Turnaround Time: %f\n", avgTurnaroundTime);
+
+    return 0;
+}
+
+
+
+
+//Using Java
+import java.util.*;
+public class RoundRobin{
+ public static void main(String[] args) {
+ Scanner input = new Scanner(System.in);
+ System.out.print("Enter the number of processes: ");
+ int n = input.nextInt();
+
+ int[] burstTimes = new int[n];
+ int[] remainingTimes = new int[n];
+ int[] waitingTimes = new int[n];
+ int[] turnaroundTimes = new int[n];
+ int[] arrivalTimes = new int[n];
+ int[] completionTimes = new int[n];
+
+ System.out.print("Enter the time quantum: ");
+ int quantum = input.nextInt();
+
+ System.out.println("Enter the arrival time and burst time for each process:");
+ for (int i = 0; i < n; i++) {
+ System.out.print("Process " + (i+1) + " arrival time: ");
+ arrivalTimes[i] = input.nextInt();
+ System.out.print("Process " + (i+1) + " burst time: ");
+ burstTimes[i] = input.nextInt();
+ remainingTimes[i] = burstTimes[i];
+ }
+
+ int currentTime = 0;
+ while (true) {
+ boolean done = true;
+ for (int i = 0; i < n; i++) {
+ if (remainingTimes[i] > 0 && arrivalTimes[i] <= currentTime) {
+ done = false;
+ if (remainingTimes[i] > quantum) {
+ currentTime += quantum;
+ remainingTimes[i] -= quantum;
+ } else {
+ currentTime += remainingTimes[i];
+ completionTimes[i] = currentTime;
+ waitingTimes[i] = currentTime - burstTimes[i] - arrivalTimes[i];
+ remainingTimes[i] = 0;
+ }
+ }
+ }
+ if (done) {
+ break;
+ }
+ }
+ for (int i = 0; i < n; i++) {
+ turnaroundTimes[i] = completionTimes[i] - arrivalTimes[i];
+ }
+ float avgWaitingTime = 0, avgTurnaroundTime = 0;
+ for (int i = 0; i < n; i++) {
+ avgWaitingTime += waitingTimes[i];
+ avgTurnaroundTime += turnaroundTimes[i];
+ }
+ avgWaitingTime /= n;
+ avgTurnaroundTime /= n;
+
+ System.out.println("\nProcess \tArrival Time\tBurst Time\tCompletion Time \tWaiting Time\tTurnaround Time");
+ for (int i = 0; i < n; i++) {
+ System.out.println((i+1) + "\t\t " + arrivalTimes[i] + "\t\t " + burstTimes[i] + "\t\t " + completionTimes[i] + "\t\t\t" + waitingTimes[i] + "\t\t\t"+ turnaroundTimes[i]);
+ }
+ System.out.println("\nAverage Waiting Time: " + avgWaitingTime);
+ System.out.println("\nAverage Turnaround Time: " + avgTurnaroundTime);
+ }
+}
+
+
+
+
+#Using python
+import sys
+
+n = int(input("Enter the number of processes: "))
+
+burstTimes = [0] * n
+remainingTimes = [0] * n
+waitingTimes = [0] * n
+turnaroundTimes = [0] * n
+arrivalTimes = [0] * n
+completionTimes = [0] * n
+
+quantum = int(input("Enter the time quantum: "))
+
+print("Enter the arrival time and burst time for each process:")
+for i in range(n):
+    arrivalTimes[i] = int(input("Process " + str(i+1) + " arrival time: "))
+    burstTimes[i] = int(input("Process " + str(i+1) + " burst time: "))
+    remainingTimes[i] = burstTimes[i]
+
+currentTime = 0
+while True:
+    done = True
+    for i in range(n):
+        if remainingTimes[i] > 0 and arrivalTimes[i] <= currentTime:
+            done = False
+            if remainingTimes[i] > quantum:
+                currentTime += quantum
+                remainingTimes[i] -= quantum
+            else:
+                currentTime += remainingTimes[i]
+                completionTimes[i] = currentTime
+                waitingTimes[i] = currentTime - burstTimes[i] - arrivalTimes[i]
+                remainingTimes[i] = 0
+    if done:
+        break
+
+for i in range(n):
+    turnaroundTimes[i] = completionTimes[i] - arrivalTimes[i]
+
+avgWaitingTime = sum(waitingTimes) / n
+avgTurnaroundTime = sum(turnaroundTimes) / n
+
+print("\nProcess \tArrival Time\tBurst Time\tCompletion Time \tWaiting Time\tTurnaround Time")
+for i in range(n):
+    print(str(i+1) + "\t\t " + str(arrivalTimes[i]) + "\t\t " + str(burstTimes[i]) + "\t\t " + str(completionTimes[i]) + "\t\t\t" + str(waitingTimes[i]) + "\t\t\t"+ str(turnaroundTimes[i]))
+
+print("\nAverage Waiting Time: " + str(avgWaitingTime))
+print("\nAverage Turnaround Time: " + str(avgTurnaroundTime))
