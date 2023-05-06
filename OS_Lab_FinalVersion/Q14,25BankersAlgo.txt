@@ -5,7 +5,6 @@ int main()
  int n, m, i, j, k;
  n = 0;
  m = 0;
- printf("Pranav Joshi Roll No:43\n");
  printf("Enter the number of processes: ");
  scanf("%d", &n);
  printf("\nEnter the number of resources: ");
@@ -112,7 +111,6 @@ int main()
 #Using python
 n = 0
 m = 0
-print("Pranav Joshi Roll No:43")
 n = int(input("Enter the number of processes: "))
 m = int(input("\nEnter the number of resources: "))
 max = [[0 for j in range(m)] for i in range(n)]
