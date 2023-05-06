@@ -36,7 +36,6 @@ void *reader(void *arg)
 }
 int main()
 {
- printf("Pranav Joshi \n");
  pthread_t writers[4], readers[6];
  sem_init(&read_sem, 0, 1);
  sem_init(&write_sem, 0, 1);
@@ -108,5 +107,4 @@ def run():
         time.sleep(1)
 
 if __name__ == '__main__':
-    print("Pranav Joshi")
     run()
