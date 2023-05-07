@@ -3,46 +3,73 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <semaphore.h>
+
 #define N 5
+
 sem_t forks[N];
 sem_t mutex;
+sem_t counter_mutex;
+int count = 0;
+
 void *philosopher(void *arg)
 {
- int id = *(int *)arg;
- int left_fork = id;
- int right_fork = (id + 1) % N;
- while (1) {
- printf("Philosopher %d is thinking.\n", id);
- sleep(rand() % 5);
- sem_wait(&mutex);
- sem_wait(&forks[left_fork]);
- sem_wait(&forks[right_fork]);
- sem_post(&mutex);
- printf("Philosopher %d is eating.\n", id);
- sleep(rand() % 5);
- sem_post(&forks[left_fork]);
- sem_post(&forks[right_fork]);
- printf("Philosopher %d finished eating.\n", id);
- }
+    int id = *(int *)arg;
+    int left_fork = id;
+    int right_fork = (id + 1) % N;
+
+    while (1) {
+        printf("Philosopher %d is thinking.\n", id);
+        sleep(rand() % 5);
+
+        sem_wait(&mutex);
+        sem_wait(&forks[left_fork]);
+        sem_wait(&forks[right_fork]);
+        sem_post(&mutex);
+
+        printf("Philosopher %d is eating.\n", id);
+        sleep(rand() % 5);
+
+        sem_wait(&counter_mutex);
+        count++;
+        if (count == N) {
+            sem_post(&counter_mutex);
+            break;
+        }
+        sem_post(&counter_mutex);
+
+        sem_post(&forks[left_fork]);
+        sem_post(&forks[right_fork]);
+        printf("Philosopher %d finished eating.\n", id);
+    }
+
+    return NULL;
 }
+
 int main()
 {
- pthread_t philosophers[N];
- int ids[N];
- sem_init(&mutex, 0, 1);
- int i;
- for (i = 0; i < N; i++)
- sem_init(&forks[i], 0, 1);
- for (i = 0; i < N; i++) {
- ids[i] = i;
- pthread_create(&philosophers[i], NULL, philosopher, &ids[i]);
- }
- for (i = 0; i < N; i++)
- pthread_join(philosophers[i], NULL);
- sem_destroy(&mutex);
- for (i = 0; i < N; i++)
- sem_destroy(&forks[i]);
- return 0;
+    pthread_t philosophers[N];
+    int ids[N];
+
+    sem_init(&mutex, 0, 1);
+    sem_init(&counter_mutex, 0, 1);
+
+    for (int i = 0; i < N; i++) {
+        sem_init(&forks[i], 0, 1);
+        ids[i] = i;
+        pthread_create(&philosophers[i], NULL, philosopher, &ids[i]);
+    }
+
+    for (int i = 0; i < N; i++) {
+        pthread_join(philosophers[i], NULL);
+    }
+
+    sem_destroy(&mutex);
+    sem_destroy(&counter_mutex);
+    for (int i = 0; i < N; i++) {
+        sem_destroy(&forks[i]);
+    }
+
+    return 0;
 }
 
 
