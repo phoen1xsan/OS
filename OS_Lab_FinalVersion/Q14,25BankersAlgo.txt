@@ -1,4 +1,73 @@
 //Using C
+#include<stdio.h>
+#include<stdlib.h>
+#include<semaphore.h>
+#include<pthread.h>
+
+#define N 5
+
+sem_t room;
+sem_t forks[N];
+
+void *philosophers(void*item){
+    int num = *(int*)item;
+
+    int left_fork = num;
+    int right_fork = (num+1)%N;
+
+    while(1){
+
+    //making the room available
+    sem_wait(&room);
+
+    //waiting for both forks to be avaialbe
+    sem_wait(&forks[left_fork]);
+    sem_wait(&forks[right_fork]);
+
+    printf("Philosopher %d is eating\n",num);
+
+    //release both the forks
+    sem_post(&forks[left_fork]);
+    sem_post(&forks[right_fork]);
+
+    //release room
+    sem_post(&room);
+
+    printf("Philosopher %d is thinking\n", num);
+    }
+
+    return 0;
+}
+
+int main(){
+    pthread_t threads[N];
+    int ids[N];
+    int i;
+
+    //initialise the room semaphor
+    sem_init(&room,0,N-1);
+
+    //initialise the fork semaphor
+    for(int i=0;i<N;i++){
+        sem_init(&forks[i],0,1);
+    }
+
+    //create philosopher threads
+    for(int i=0;i<N;i++){
+        ids[i] = i;
+        pthread_create(&threads[i],NULL,philosophers, &ids[i]);
+    }
+
+    //wait for the threads to finsih
+    for(int i=0;i<N;i++){
+        pthread_join(threads[i],NULL);
+    }
+}
+
+
+
+
+//Using C
 #include <stdio.h>
 int main()
 {
