@@ -17,3 +17,5 @@ alias rm='rm -i'
 v. Count the currently login users to the system.
 
 who | wc -l
+or
+users
