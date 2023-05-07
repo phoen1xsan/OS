@@ -8,7 +8,7 @@ ls -a | grep "^\." > hidden
 
 c. To assign write permission to group user and remove execute permission from owner for an ordinary file named test by absolute way:
 
-chmod g+w,o-x test
+chmod 664 test
 
 d. To create a soft and hard link for a given file:
 
